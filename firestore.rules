@@ -1,0 +1,115 @@
+rules_version = '2';
+
+// Regras de segurança do AdegaGo (Cloud Firestore).
+//
+// Em resumo:
+//   - Qualquer pessoa pode LER os produtos (catálogo público).
+//   - Só um ADMINISTRADOR pode criar, editar ou excluir produtos, e os dados precisam ser válidos.
+//   - Administrador = usuário logado cujo UID tem um documento em admins/{uid}.
+//   - Ninguém consegue criar, editar, excluir ou listar documentos de admins pelo aplicativo.
+//   - Tudo o que não está liberado abaixo é NEGADO por padrão.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------
+    // Funções auxiliares
+    // ---------------------------------------------------------------
+
+    function estaLogado() {
+      return request.auth != null;
+    }
+
+    // Verifica no PRÓPRIO banco se existe admins/{uid} para o usuário logado.
+    // (Cada verificação conta 1 leitura na cota gratuita.)
+    function ehAdmin() {
+      return estaLogado()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Preço: número maior que zero, de até R$ 99.999,99 e com no máximo 2 casas decimais.
+    // A tolerância 0.000001 absorve o erro de arredondamento de números decimais (ex.: 24.9 * 100).
+    function precoValido(valor) {
+      return valor is number
+        && valor > 0
+        && valor <= 99999.99
+        && math.abs(valor * 100 - math.round(valor * 100)) < 0.000001;
+    }
+
+    // Campos permitidos. precoPromocional e imagem são opcionais (campo ausente = não existe).
+    function camposPermitidos(dados) {
+      return dados.keys().hasOnly([
+          'nome', 'descricao', 'categoria', 'preco', 'disponivel',
+          'precoPromocional', 'imagem', 'createdAt', 'updatedAt'
+        ])
+        && dados.keys().hasAll([
+          'nome', 'descricao', 'categoria', 'preco', 'disponivel',
+          'createdAt', 'updatedAt'
+        ]);
+    }
+
+    // Se existir precoPromocional, ele precisa ser um preço válido e MENOR que o preço normal.
+    function promocaoValida(dados) {
+      return !('precoPromocional' in dados)
+        || (precoValido(dados.precoPromocional) && dados.precoPromocional < dados.preco);
+    }
+
+    // Se existir imagem, deve ser um endereço http(s):// ou um caminho iniciado por "/" (sem espaços).
+    function imagemValida(dados) {
+      return !('imagem' in dados)
+        || (dados.imagem is string
+            && dados.imagem.size() <= 500
+            && dados.imagem.matches('^(https?://|/)[^ ]+$'));
+    }
+
+    function produtoValido(dados) {
+      return camposPermitidos(dados)
+        && dados.nome is string && dados.nome.size() >= 2 && dados.nome.size() <= 80
+        && dados.descricao is string && dados.descricao.size() >= 1 && dados.descricao.size() <= 240
+        && dados.categoria is string && dados.categoria.size() >= 2 && dados.categoria.size() <= 40
+        && precoValido(dados.preco)
+        && dados.disponivel is bool
+        && promocaoValida(dados)
+        && imagemValida(dados)
+        && dados.createdAt is timestamp
+        && dados.updatedAt is timestamp;
+    }
+
+    // ---------------------------------------------------------------
+    // Produtos
+    // ---------------------------------------------------------------
+    match /produtos/{produtoId} {
+
+      // Catálogo público: qualquer pessoa pode consultar (sem login).
+      allow read: if true;
+
+      // Criar: só admin, dados válidos e datas geradas PELO SERVIDOR (serverTimestamp()).
+      allow create: if ehAdmin()
+        && produtoValido(request.resource.data)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      // Editar: só admin, dados válidos, createdAt imutável e updatedAt renovado pelo servidor.
+      allow update: if ehAdmin()
+        && produtoValido(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time;
+
+      // Excluir: só admin.
+      allow delete: if ehAdmin();
+    }
+
+    // ---------------------------------------------------------------
+    // Administradores (documento admins/{uid} criado manualmente no Console do Firebase)
+    // ---------------------------------------------------------------
+    match /admins/{uid} {
+
+      // O usuário só pode ler o PRÓPRIO documento (para o aplicativo saber se ele é admin).
+      // Para quem não é admin, o resultado é apenas "documento inexistente".
+      allow get: if estaLogado() && request.auth.uid == uid;
+
+      // Ninguém lista, cria, altera ou exclui admins pelo aplicativo.
+      // Isso impede que um usuário conceda privilégios a si próprio.
+      allow list, create, update, delete: if false;
+    }
+  }
+}

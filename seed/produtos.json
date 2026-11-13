@@ -1,0 +1,97 @@
+[
+  {
+    "nome": "Cerveja Pilsen Long Neck 355 ml",
+    "descricao": "Cerveja pilsen leve e refrescante, pensada para servir bem gelada em qualquer ocasião.",
+    "categoria": "Cervejas",
+    "preco": 6.5,
+    "disponivel": true,
+    "imagem": "/imagens/cerveja-pilsen.svg"
+  },
+  {
+    "nome": "Cerveja IPA Artesanal 500 ml",
+    "descricao": "Amargor marcante e aroma cítrico de lúpulo. Produção artesanal em pequenos lotes.",
+    "categoria": "Cervejas",
+    "preco": 24.9,
+    "disponivel": true,
+    "precoPromocional": 19.9,
+    "imagem": "/imagens/cerveja-ipa.svg"
+  },
+  {
+    "nome": "Vinho Tinto Malbec 750 ml",
+    "descricao": "Tinto de corpo médio, notas de frutas escuras e final suave. Combina com carnes grelhadas.",
+    "categoria": "Vinhos e espumantes",
+    "preco": 69.9,
+    "disponivel": true,
+    "precoPromocional": 54.9,
+    "imagem": "/imagens/vinho-tinto.svg"
+  },
+  {
+    "nome": "Vinho Branco Sauvignon Blanc 750 ml",
+    "descricao": "Branco seco, fresco e aromático, com acidez equilibrada. Ótimo com peixes e saladas.",
+    "categoria": "Vinhos e espumantes",
+    "preco": 58,
+    "disponivel": true,
+    "imagem": "/imagens/vinho-branco.svg"
+  },
+  {
+    "nome": "Espumante Brut 750 ml",
+    "descricao": "Espumante seco de perlage fina, indicado para brindes e celebrações.",
+    "categoria": "Vinhos e espumantes",
+    "preco": 79.9,
+    "disponivel": false,
+    "precoPromocional": 64.9,
+    "imagem": "/imagens/espumante.svg"
+  },
+  {
+    "nome": "Whisky Escocês 12 anos 1 L",
+    "descricao": "Maturado por 12 anos, com notas de mel, baunilha e madeira. Ideal para degustação.",
+    "categoria": "Destilados",
+    "preco": 189.9,
+    "disponivel": true
+  },
+  {
+    "nome": "Gin London Dry 750 ml",
+    "descricao": "Perfil seco e herbal, com predominância de zimbro e toque cítrico. Excelente para drinks.",
+    "categoria": "Destilados",
+    "preco": 109.9,
+    "disponivel": true,
+    "precoPromocional": 94.9,
+    "imagem": "/imagens/gin.svg"
+  },
+  {
+    "nome": "Cachaça Artesanal Envelhecida 700 ml",
+    "descricao": "Envelhecida em barril de carvalho, aroma de baunilha e sabor suave.",
+    "categoria": "Destilados",
+    "preco": 49.9,
+    "disponivel": true
+  },
+  {
+    "nome": "Vodka Premium 1 L",
+    "descricao": "Destilada em colunas múltiplas, de sabor limpo e neutro. Boa para coquetéis e para beber pura.",
+    "categoria": "Destilados",
+    "preco": 64.9,
+    "disponivel": false
+  },
+  {
+    "nome": "Água Tônica 350 ml (lata)",
+    "descricao": "Água tônica clássica, levemente amarga. Perfeita para preparar gin tônica.",
+    "categoria": "Não alcoólicos",
+    "preco": 4.8,
+    "disponivel": true
+  },
+  {
+    "nome": "Refrigerante de Cola 2 L",
+    "descricao": "Refrigerante sabor cola em garrafa de 2 litros, para compartilhar.",
+    "categoria": "Não alcoólicos",
+    "preco": 9.5,
+    "disponivel": true,
+    "precoPromocional": 7.9
+  },
+  {
+    "nome": "Gelo em Cubos 5 kg",
+    "descricao": "Pacote de gelo em cubos, ideal para festas e para manter as bebidas geladas.",
+    "categoria": "Petiscos e conveniência",
+    "preco": 14,
+    "disponivel": true
+  }
+]
