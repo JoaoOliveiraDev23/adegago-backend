@@ -2,6 +2,9 @@
 # Dependências
 node_modules/
 
+# Build do frontend copiado para publicação
+dist/
+
 # Logs e arquivos gerados pelo Firebase CLI / emuladores
 *.log
 firebase-debug.log*
